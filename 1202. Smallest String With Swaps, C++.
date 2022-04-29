@@ -1,0 +1,38 @@
+class Solution {
+public:
+    vector<vector<int>> adj;
+    string smallestStringWithSwaps(string s, vector<vector<int>>& pairs) {
+        adj = vector<vector<int>> (s.size());
+        for(auto p : pairs){
+            adj[p[0]].push_back(p[1]);
+            adj[p[1]].push_back(p[0]);
+        }
+        
+        set<int> seen;
+        for(int i = 0; i<s.size();i++){
+            if(seen.count(i) == 0){
+                vector<int> indexes;
+                vector<char> chars;
+                dfs(s, i, indexes, chars, seen);
+                sort(chars.begin(), chars.end());
+                sort(indexes.begin(), indexes.end());
+                for(int j = 0; j<chars.size(); j++){
+                    char nextChar = chars[j];
+                    s[indexes[j]] = nextChar;
+                }
+            }
+        }
+        return s;
+    }
+    
+    void dfs(string & s, int i, vector<int> & indexes, vector<char> & chars, set<int> & seen){
+        chars.push_back(s[i]);
+        indexes.push_back(i);
+        seen.insert(i);
+        for(auto x : adj[i]){
+            if(seen.count(x) == 0){
+                dfs(s, x, indexes, chars, seen);
+            }
+        }
+    }
+};
